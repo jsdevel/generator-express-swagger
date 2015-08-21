@@ -15,77 +15,61 @@ module.exports = generators.Base.extend({
 
     this.slugify = slugify;
   },
-  prompting: {
-    dir: function () {
+  prompting: function() {
+    var done = this.async();
 
-      if (this.options.createDirectory !== undefined) {
-        return true;
-      }
-
-      var done = this.async();
-      var prompt = [{
+    this.prompt([
+      {
         type: 'confirm',
         name: 'createDirectory',
         message: 'Would you like to create a new directory for your project?'
-      }];
-
-      this.prompt(prompt, function (response) {
-        this.options.createDirectory = response.createDirectory;
-        done();
-      }.bind(this));
-    },
-    dirname: function () {
-
-      if (!this.options.createDirectory || this.options.dirname) {
-        return true;
-      }
-
-      var done = this.async();
-      var prompt = [{
+      },
+      {
         type: 'input',
-        name: 'dirname',
-        message: 'Enter the directory name (this will also be used for the app name in package.json)'
-      }];
+        name: 'appname',
+        message: 'Enter app/directory name'
+      },
+      {
+        type: 'input',
+        name: 'description',
+        message: 'Enter the project description.  This will be used in README.md, package.json, and the swagger documentation'
+      },
+      {
+        type: 'input',
+        name: 'license',
+        message: 'Enter the project license.  This will be used in README.md, package.json, and the swagger documentation',
+        default: 'UNLICENSED'
+      },
+      {
+        type: 'input',
+        name: 'apiBasePath',
+        message: 'Enter base path for the API I.E. /api/v1',
+        default: '/api/v1'
+      }
+    ], function (response) {
+      this.options.createDirectory = response.createDirectory;
+      this.options.appname = response.appname;
+      this.options.description = response.description;
+      this.options.license = response.license;
+      this.options.apiBasePath = response.apiBasePath;
 
-      this.prompt(prompt, function (response) {
-        this.options.dirname = response.dirname;
-        done();
-      }.bind(this));
-    }
-  },
+      done();
+    }.bind(this));
+  }
+
   writing: {
     buildEnv: function () {
-
-      // create directory
       if(this.options.createDirectory){
-        this.destinationRoot(this.options.dirname);
-        this.appname = this.options.dirname;
+        this.destinationRoot(this.options.appname);
       }
 
-      var name = 'basic';
-      this.filetype = 'js';
+      this.sourceRoot(path.join(__dirname, 'templates', 'base'));
+      this.directory('.', '.');
 
-      // shared across all generators
-      this.sourceRoot(path.join(__dirname, 'templates', 'shared'));
-      glob.sync('**', { cwd: this.sourceRoot() }).map(function (file) {
-        this.template(file, file.replace(/^_/, ''));
+      this.sourceRoot(path.join(__dirname, 'templates', 'specific'));
+      glob.sync('**/*', { cwd: this.sourceRoot() }).map(function (file) {
+        this.template(file, file);
       }, this);
-
-
-      // shared for mvc/basic generators
-      this.sourceRoot(path.join(__dirname, 'templates', name + '-shared'));
-      this.directory('.', '.');
-
-
-      // templates
-      this.sourceRoot(path.join(__dirname, 'templates', name));
-      this.directory('.', '.');
-    },
-    assetsDirs: function () {
-      mkdirp.sync('public');
-      mkdirp.sync('public/js');
-      mkdirp.sync('public/css');
-      mkdirp.sync('public/img');
     }
   },
   install: function () {

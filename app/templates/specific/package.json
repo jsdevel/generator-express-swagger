@@ -1,0 +1,38 @@
+{
+  "name": "<%= slugify(appname) %>",
+  "description": "<%= options.description %>",
+  "license": "<%= options.license %>",
+  "version": "1.0.0",
+  "private": true,
+  "config": {
+    "apiBasePath": "<%= options.apiBasePath %>"
+  },
+  "scripts": {
+    "pretest": "gulp lint",
+    "start": "./bin/www",
+    "test": "gulp test"
+  },
+  "dependencies": {
+    "array-predicates": "^1.0.2",
+    "body-parser": "^1.13.3",
+    "cookie-parser": "^1.3.3",
+    "cors": "^2.7.1",
+    "express": "^4.13.3",
+    "morgan": "^1.6.1",
+    "require-dir": "^0.3.0",
+    "serve-favicon": "^2.3.0",
+    "swaggerize-express": "^4.0.3"
+  },
+  "devDependencies": {
+    "chai": "^3.2.0",
+    "gulp": "^3.9.0",
+    "gulp-istanbul": "^0.10.0",
+    "gulp-jscs": "^2.0.0",
+    "gulp-jshint": "^1.11.2",
+    "gulp-mocha": "^2.1.3",
+    "gulp-watch": "^4.3.5",
+    "mocha": "^2.2.5",
+    "proxyquire": "^1.7.0",
+    "sinon": "^1.16.0"
+  }
+}
